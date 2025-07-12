@@ -23,6 +23,7 @@ export interface Customer {
   address?: string;
   createdAt: Date;
   updatedAt: Date;
+  machinesCount?: number;
 }
 
 /**

@@ -195,6 +195,112 @@
         </div>
       </div>
     </div>
+
+    <!-- Vista Card Responsive -->
+    <div class="machines-cards">
+      <div *ngFor="let machine of filteredMachines" class="machine-card">
+        <div class="card-header">
+          <div class="machine-icon">
+            <mat-icon>{{ machine.icon || "precision_manufacturing" }}</mat-icon>
+          </div>
+          <div class="card-title">
+            <span class="machine-name">{{ machine.name }}</span>
+            <span class="machine-type">Macchina Industriale</span>
+          </div>
+          <div class="card-actions">
+            <button
+              class="action-btn info"
+              (click)="viewMachineDetails(machine.id)"
+              title="Visualizza dettagli"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              class="action-btn edit"
+              (click)="showEditForm(machine)"
+              title="Modifica macchina"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              class="action-btn delete"
+              (click)="deleteMachine(machine.id)"
+              title="Elimina macchina"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-field">
+            <span class="field-label">Cliente</span>
+            <span class="field-value">{{ machine.customerName }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Data Inizio</span>
+            <span class="field-value">{{
+              machine.operationalStartDate | date : "dd/MM/yyyy"
+            }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Ore Totali</span>
+            <span class="field-value">{{
+              formatHours(machine.totalOperationHours)
+            }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Efficienza</span>
+            <span class="field-value">{{ machine.efficiency }}%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="status-dropdown">
+            <button
+              class="status-button"
+              [ngClass]="'status-' + machine.status"
+              (click)="toggleStatusMenu(machine.id)"
+            >
+              <mat-icon>{{ getStatusIcon(machine.status) }}</mat-icon>
+              <span>{{ getStatusLabel(machine.status) }}</span>
+              <mat-icon class="dropdown-icon">keyboard_arrow_down</mat-icon>
+            </button>
+
+            <div class="status-menu" *ngIf="statusMenuOpen[machine.id]">
+              <button
+                *ngFor="let status of availableStatuses"
+                class="status-option"
+                [ngClass]="'status-' + status.value"
+                (click)="changeStatus(machine.id, status.value)"
+              >
+                <mat-icon>{{ status.icon }}</mat-icon>
+                <span>{{ status.label }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="anomaly-indicator"
+            [ngClass]="{ 'has-anomaly': machine.hasAnomalies }"
+          >
+            <span>{{ machine.hasAnomalies ? "Anomalie" : "OK" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messaggio nessun risultato per cards -->
+      <div *ngIf="filteredMachines.length === 0" class="no-results">
+        <div class="no-results-icon">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h3>Nessuna macchina trovata</h3>
+        <p *ngIf="searchTerm">
+          Prova a modificare i termini di ricerca o rimuovi i filtri
+        </p>
+        <p *ngIf="!searchTerm">Non ci sono macchine registrate nel sistema</p>
+      </div>
+    </div>
   </div>
 
   <!-- Form per aggiunta/modifica macchina -->

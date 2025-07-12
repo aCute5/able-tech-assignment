@@ -148,6 +148,77 @@
         </div>
       </div>
     </div>
+
+    <!-- Vista Card Responsive -->
+    <div class="customers-cards">
+      <div *ngFor="let customer of filteredCustomers" class="customer-card">
+        <div class="card-header">
+          <div class="customer-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div class="card-title">
+            <span class="customer-name">{{ customer.name }}</span>
+            <span class="customer-type">Cliente Aziendale</span>
+          </div>
+          <div class="card-actions">
+            <button
+              class="action-btn info"
+              (click)="viewCustomerDetails(customer.id)"
+              title="Visualizza dettagli"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              class="action-btn delete"
+              (click)="deleteCustomer(customer.id)"
+              title="Elimina cliente"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-field">
+            <span class="field-label">Partita IVA</span>
+            <span class="field-value">{{ customer.vatNumber }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Email</span>
+            <span class="field-value">{{ customer.email }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Telefono</span>
+            <span class="field-value">{{ customer.phone }}</span>
+          </div>
+          <div class="card-field">
+            <span class="field-label">Data Creazione</span>
+            <span class="field-value">{{
+              customer.createdAt | date : "dd/MM/yyyy"
+            }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="customer-type-badge">
+            <mat-icon>business</mat-icon>
+            <span>Azienda</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messaggio nessun risultato per cards -->
+      <div *ngIf="filteredCustomers.length === 0" class="no-results">
+        <div class="no-results-icon">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h3>Nessun cliente trovato</h3>
+        <p *ngIf="searchTerm">
+          Prova a modificare i termini di ricerca o rimuovi i filtri
+        </p>
+        <p *ngIf="!searchTerm">Non ci sono clienti registrati nel sistema</p>
+      </div>
+    </div>
   </div>
 
   <!-- Form per aggiunta/modifica cliente -->

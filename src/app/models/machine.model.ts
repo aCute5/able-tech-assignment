@@ -25,6 +25,7 @@ export interface Machine {
   status: MachineStatus;
   hasAnomalies: boolean;
   icon?: string;
+  efficiency?: number;
 }
 
 /**
@@ -51,5 +52,4 @@ export interface MachineDetails extends Machine {
   model: string;
   lastMaintenanceDate: Date;
   nextMaintenanceDate: Date;
-  efficiency: number; // Percentuale di efficienza
 }
