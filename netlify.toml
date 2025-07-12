@@ -1,0 +1,45 @@
+[build]
+  # Build command
+  command = "npm run build"
+  
+  # Publish directory (Angular 18+ crea i file nella sottocartella browser)
+  publish = "dist/able-tech-machines/browser"
+
+[build.environment]
+  # Versione Node.js (usa una versione recente per Angular 18+)
+  NODE_VERSION = "18"
+  
+  # Variabili di ambiente per il build
+  NPM_FLAGS = "--production=false"
+
+# Configurazione per Single Page Application (SPA)
+# Reindirizza tutte le richieste all'index.html per Angular routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers per ottimizzazioni
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache per file statici
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable" 
