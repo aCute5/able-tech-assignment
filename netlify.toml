@@ -7,7 +7,7 @@
 
 [build.environment]
   # Versione Node.js (usa una versione recente per Angular 18+)
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   
   # Variabili di ambiente per il build
   NPM_FLAGS = "--production=false"
