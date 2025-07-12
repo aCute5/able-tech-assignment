@@ -1,0 +1,509 @@
+<!--
+  Template Machines - Gestione del parco macchine
+  
+  Componenti principali:
+  - Header con ricerca e azione di aggiunta
+  - Tabella responsive con dati macchine
+  - Form per creazione/modifica macchine
+  - Modal per dettagli macchina
+  - Indicatori di stato visivi
+-->
+
+<div class="machines-container">
+  <!-- Header con ricerca e azioni -->
+  <div class="machines-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="machines-title">
+          <mat-icon>precision_manufacturing</mat-icon>
+          Gestione Macchine
+        </h1>
+        <div class="machines-stats">
+          <span class="stat-item">
+            <mat-icon>inventory_2</mat-icon>
+            {{ filteredMachines.length }} macchine
+          </span>
+          <span class="stat-item running">
+            <mat-icon>play_circle</mat-icon>
+            {{ getStatusCount(MachineStatus.RUNNING) }} attive
+          </span>
+          <span class="stat-item stopped">
+            <mat-icon>pause_circle</mat-icon>
+            {{ getStatusCount(MachineStatus.STOPPED) }} ferme
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="search-container">
+          <mat-icon>search</mat-icon>
+          <input
+            class="search-input"
+            [(ngModel)]="searchTerm"
+            (input)="filterMachines()"
+            placeholder="Cerca macchine..."
+          />
+        </div>
+
+        <button class="add-button premium" (click)="showAddForm()">
+          <mat-icon>add_circle</mat-icon>
+          <span>Aggiungi Macchina</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicatore di caricamento -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Caricamento macchine...</p>
+  </div>
+
+  <!-- Contenuto principale -->
+  <div *ngIf="!isLoading">
+    <!-- Tabella macchine moderna -->
+    <div class="modern-table-container">
+      <div class="table-wrapper">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Macchina</th>
+              <th>Cliente</th>
+              <th>Stato</th>
+              <th>Data Inizio</th>
+              <th>Ore Totali</th>
+              <th>Anomalie</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let machine of filteredMachines" class="table-row">
+              <td class="machine-cell">
+                <div class="machine-info">
+                  <div class="machine-icon">
+                    <mat-icon>{{
+                      machine.icon || "precision_manufacturing"
+                    }}</mat-icon>
+                  </div>
+                  <div class="machine-details">
+                    <span class="machine-name">{{ machine.name }}</span>
+                    <span class="machine-type">Macchina Industriale</span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="customer-cell">
+                <div class="customer-info">
+                  <span>{{ machine.customerName }}</span>
+                </div>
+              </td>
+
+              <td class="status-cell">
+                <div class="status-dropdown">
+                  <button
+                    class="status-button"
+                    [ngClass]="'status-' + machine.status"
+                    (click)="toggleStatusMenu(machine.id)"
+                  >
+                    <mat-icon>{{ getStatusIcon(machine.status) }}</mat-icon>
+                    <span>{{ getStatusLabel(machine.status) }}</span>
+                    <mat-icon class="dropdown-icon"
+                      >keyboard_arrow_down</mat-icon
+                    >
+                  </button>
+
+                  <div class="status-menu" *ngIf="statusMenuOpen[machine.id]">
+                    <button
+                      *ngFor="let status of availableStatuses"
+                      class="status-option"
+                      [ngClass]="'status-' + status.value"
+                      (click)="changeStatus(machine.id, status.value)"
+                    >
+                      <mat-icon>{{ status.icon }}</mat-icon>
+                      <span>{{ status.label }}</span>
+                    </button>
+                  </div>
+                </div>
+              </td>
+
+              <td class="date-cell">
+                <div class="date-info">
+                  <span>{{
+                    machine.operationalStartDate | date : "dd/MM/yyyy"
+                  }}</span>
+                </div>
+              </td>
+
+              <td class="hours-cell">
+                <div class="hours-info">
+                  <span class="hours-value">{{
+                    formatHours(machine.totalOperationHours)
+                  }}</span>
+                </div>
+              </td>
+
+              <td class="anomalies-cell">
+                <div
+                  class="anomaly-indicator"
+                  [ngClass]="{ 'has-anomaly': machine.hasAnomalies }"
+                >
+                  <span>{{ machine.hasAnomalies ? "Anomalie" : "OK" }}</span>
+                </div>
+              </td>
+
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button
+                    class="action-btn info"
+                    (click)="viewMachineDetails(machine.id)"
+                    title="Visualizza dettagli"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+
+                  <button
+                    class="action-btn edit"
+                    (click)="showEditForm(machine)"
+                    title="Modifica macchina"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button
+                    class="action-btn delete"
+                    (click)="deleteMachine(machine.id)"
+                    title="Elimina macchina"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Messaggio nessun risultato -->
+        <div *ngIf="filteredMachines.length === 0" class="no-results">
+          <div class="no-results-icon">
+            <mat-icon>search_off</mat-icon>
+          </div>
+          <h3>Nessuna macchina trovata</h3>
+          <p *ngIf="searchTerm">
+            Prova a modificare i termini di ricerca o rimuovi i filtri
+          </p>
+          <p *ngIf="!searchTerm">Non ci sono macchine registrate nel sistema</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form per aggiunta/modifica macchina -->
+  <div *ngIf="showForm" class="modal-overlay" (click)="hideForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? "Modifica" : "Aggiungi" }} Macchina</h2>
+        <button class="close-button" (click)="hideForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="machineForm" (ngSubmit)="saveMachine()">
+          <div class="form-grid">
+            <!-- Nome macchina -->
+            <div class="form-field">
+              <label>Nome Macchina *</label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Es. Trattore Autonomo T-5000"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm.get('name')?.hasError('required') &&
+                  machineForm.get('name')?.touched
+                "
+              >
+                Il nome è obbligatorio
+              </div>
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm.get('name')?.hasError('minlength') &&
+                  machineForm.get('name')?.touched
+                "
+              >
+                Il nome deve avere almeno 3 caratteri
+              </div>
+            </div>
+
+            <!-- Cliente -->
+            <div class="form-field">
+              <label>Cliente *</label>
+              <select formControlName="customerId">
+                <option value="">Seleziona cliente...</option>
+                <option
+                  *ngFor="let customer of customers"
+                  [value]="customer.id"
+                >
+                  {{ customer.name }}
+                </option>
+              </select>
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm.get('customerId')?.hasError('required') &&
+                  machineForm.get('customerId')?.touched
+                "
+              >
+                Seleziona un cliente
+              </div>
+            </div>
+
+            <!-- Data inizio operatività -->
+            <div class="form-field">
+              <label>Data Inizio Operatività *</label>
+              <input type="date" formControlName="operationalStartDate" />
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm
+                    .get('operationalStartDate')
+                    ?.hasError('required') &&
+                  machineForm.get('operationalStartDate')?.touched
+                "
+              >
+                La data è obbligatoria
+              </div>
+            </div>
+
+            <!-- Ore totali -->
+            <div class="form-field">
+              <label>Ore Totali Operatività *</label>
+              <input
+                type="number"
+                formControlName="totalOperationHours"
+                placeholder="1250"
+                min="0"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm
+                    .get('totalOperationHours')
+                    ?.hasError('required') &&
+                  machineForm.get('totalOperationHours')?.touched
+                "
+              >
+                Le ore sono obbligatorie
+              </div>
+              <div
+                class="error-message"
+                *ngIf="
+                  machineForm.get('totalOperationHours')?.hasError('min') &&
+                  machineForm.get('totalOperationHours')?.touched
+                "
+              >
+                Le ore devono essere maggiori di 0
+              </div>
+            </div>
+
+            <!-- Icona Macchina -->
+            <div class="form-field icon-field">
+              <label>Icona Macchina *</label>
+              <div class="icon-selection">
+                <div class="icon-options">
+                  <div
+                    class="icon-box"
+                    [class.selected]="
+                      machineForm.get('icon')?.value ===
+                      'precision_manufacturing'
+                    "
+                    (click)="selectIcon('precision_manufacturing')"
+                  >
+                    <mat-icon>precision_manufacturing</mat-icon>
+                  </div>
+
+                  <div
+                    class="icon-box"
+                    [class.selected]="
+                      machineForm.get('icon')?.value === 'build_circle'
+                    "
+                    (click)="selectIcon('build_circle')"
+                  >
+                    <mat-icon>build_circle</mat-icon>
+                  </div>
+
+                  <div
+                    class="icon-box"
+                    [class.selected]="
+                      machineForm.get('icon')?.value === 'engineering'
+                    "
+                    (click)="selectIcon('engineering')"
+                  >
+                    <mat-icon>engineering</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stato -->
+            <div class="form-field">
+              <label>Stato *</label>
+              <select formControlName="status">
+                <option value="running">In Funzione</option>
+                <option value="stopped">Ferma</option>
+                <option value="maintenance">Manutenzione</option>
+                <option value="error">Errore</option>
+              </select>
+            </div>
+
+            <!-- Anomalie -->
+            <div class="form-field checkbox-field">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="hasAnomalies" />
+                <span class="checkbox-text">Ha anomalie attive</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="cancel-button" (click)="hideForm()">
+          Annulla
+        </button>
+        <button
+          type="submit"
+          class="save-button"
+          [disabled]="machineForm.invalid"
+          (click)="saveMachine()"
+        >
+          {{ isEditMode ? "Aggiorna" : "Aggiungi" }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal dettagli macchina -->
+  <div
+    *ngIf="selectedMachine || isLoadingDetails"
+    class="modal-overlay"
+    (click)="closeDetails()"
+  >
+    <div
+      class="modal-container details-modal"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2>Dettagli Macchina</h2>
+        <button class="close-button" (click)="closeDetails()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Loading spinner -->
+        <div *ngIf="isLoadingDetails" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Caricamento dettagli...</p>
+        </div>
+
+        <!-- Contenuto dettagli -->
+        <div
+          *ngIf="selectedMachine && !isLoadingDetails"
+          class="details-content fade-in"
+        >
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Nome:</label>
+              <span>{{ selectedMachine.name }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Cliente:</label>
+              <span>{{ selectedMachine.customerName }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Stato:</label>
+              <div
+                class="status-chip"
+                [ngClass]="getStatusClass(selectedMachine.status)"
+              >
+                <mat-icon>{{ getStatusIcon(selectedMachine.status) }}</mat-icon>
+                {{ getStatusLabel(selectedMachine.status) }}
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <label>Numero di Serie:</label>
+              <span>{{ selectedMachine.serialNumber }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Modello:</label>
+              <span>{{ selectedMachine.model }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Data Inizio Operatività:</label>
+              <span>{{
+                selectedMachine.operationalStartDate | date : "dd/MM/yyyy"
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Ore Totali Operatività:</label>
+              <span class="hours-highlight">{{
+                formatHours(selectedMachine.totalOperationHours)
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Efficienza:</label>
+              <span
+                class="efficiency-value"
+                [style.color]="
+                  selectedMachine.efficiency >= 85
+                    ? '#4CAF50'
+                    : selectedMachine.efficiency >= 70
+                    ? '#FF9800'
+                    : '#F44336'
+                "
+              >
+                {{ selectedMachine.efficiency }}%
+              </span>
+            </div>
+
+            <div class="detail-item">
+              <label>Ultima Manutenzione:</label>
+              <span>{{
+                selectedMachine.lastMaintenanceDate | date : "dd/MM/yyyy"
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Prossima Manutenzione:</label>
+              <span>{{
+                selectedMachine.nextMaintenanceDate | date : "dd/MM/yyyy"
+              }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Anomalie:</label>
+              <div
+                class="anomaly-chip"
+                [class.has-anomaly]="selectedMachine.hasAnomalies"
+                [class.no-anomaly]="!selectedMachine.hasAnomalies"
+              >
+                {{ selectedMachine.hasAnomalies ? "Presenti" : "Nessuna" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

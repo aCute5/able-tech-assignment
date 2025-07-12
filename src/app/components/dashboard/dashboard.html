@@ -1,0 +1,123 @@
+<!-- Dashboard semplificata - solo funzionalità base -->
+<div class="dashboard-container">
+  <!-- Header semplice -->
+
+  <!-- Contenuto principale -->
+  <div class="dashboard-content">
+    <!-- Statistiche principali -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <mat-icon>settings</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ dashboardStats?.totalMachines || 0 }}
+            </div>
+            <div class="stat-label">Macchine Totali</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <mat-icon>play_arrow</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ dashboardStats?.runningMachines || 0 }}
+            </div>
+            <div class="stat-label">Macchine Attive</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ dashboardStats?.totalCustomers || 0 }}
+            </div>
+            <div class="stat-label">Clienti</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <mat-icon>warning</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ dashboardStats?.machinesWithAnomalies || 0 }}
+            </div>
+            <div class="stat-label">Anomalie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sezione macchine -->
+    <div class="machines-section">
+      <h2 class="section-title">Macchine</h2>
+      <div class="machines-grid">
+        <div *ngFor="let machine of machines" class="machine-card">
+          <div class="machine-header">
+            <h3>{{ machine.name }}</h3>
+            <span
+              class="machine-status"
+              [class.active]="machine.status === 'running'"
+            >
+              {{ machine.status === "running" ? "ATTIVA" : "INATTIVA" }}
+            </span>
+          </div>
+          <div class="machine-details">
+            <div class="detail-row">
+              <span class="detail-label">Cliente:</span>
+              <span class="detail-value">{{ machine.customerName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Ore totali:</span>
+              <span class="detail-value"
+                >{{ machine.totalOperationHours }}h</span
+              >
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Anomalie:</span>
+              <span
+                class="detail-value"
+                [class.has-anomalies]="machine.hasAnomalies"
+              >
+                {{ machine.hasAnomalies ? "SÌ" : "NO" }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sezione clienti -->
+    <div class="customers-section">
+      <h2 class="section-title">Clienti</h2>
+      <div class="customers-grid">
+        <div *ngFor="let customer of customers" class="customer-card">
+          <div class="customer-header">
+            <h3>{{ customer.name }}</h3>
+          </div>
+          <div class="customer-details">
+            <div class="detail-row">
+              <span class="detail-label">P.IVA:</span>
+              <span class="detail-value">{{ customer.vatNumber }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Registrato:</span>
+              <span class="detail-value">{{
+                customer.createdAt | date : "short"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,322 @@
+<!--
+  Template Customers - Gestione clienti
+  
+  Layout identico a machines.html
+-->
+
+<div class="customers-container">
+  <!-- Header con ricerca e azioni -->
+  <div class="customers-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="customers-title">
+          <mat-icon>people</mat-icon>
+          Gestione Clienti
+        </h1>
+        <div class="customers-stats">
+          <span class="stat-item">
+            <mat-icon>people</mat-icon>
+            {{ filteredCustomers.length }} clienti
+          </span>
+          <span class="stat-item">
+            <mat-icon>business</mat-icon>
+            {{ filteredCustomers.length }} attivi
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="search-container">
+          <mat-icon>search</mat-icon>
+          <input
+            class="search-input"
+            [(ngModel)]="searchTerm"
+            (input)="filterCustomers()"
+            placeholder="Cerca clienti..."
+          />
+        </div>
+
+        <button class="add-button" (click)="showAddForm()">
+          <mat-icon>add_circle</mat-icon>
+          <span>Aggiungi Cliente</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicatore di caricamento -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Caricamento clienti...</p>
+  </div>
+
+  <!-- Contenuto principale -->
+  <div *ngIf="!isLoading">
+    <!-- Tabella clienti moderna -->
+    <div class="modern-table-container">
+      <div class="table-wrapper">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Partita IVA</th>
+              <th>Email</th>
+              <th>Telefono</th>
+              <th>Data Creazione</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let customer of filteredCustomers" class="table-row">
+              <td class="customer-cell">
+                <div class="customer-info">
+                  <div class="customer-icon">
+                    <mat-icon>business</mat-icon>
+                  </div>
+                  <div class="customer-details">
+                    <span class="customer-name">{{ customer.name }}</span>
+                    <span class="customer-type">Azienda Cliente</span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="vat-cell">
+                <div class="vat-info">
+                  <span>{{ customer.vatNumber }}</span>
+                </div>
+              </td>
+
+              <td class="contact-cell">
+                <div class="contact-info">
+                  <span class="email">{{ customer.email }}</span>
+                </div>
+              </td>
+
+              <td class="contact-cell">
+                <div class="contact-info">
+                  <span class="phone">{{ customer.phone }}</span>
+                </div>
+              </td>
+
+              <td class="date-cell">
+                <div class="date-info">
+                  <span>{{ customer.createdAt | date : "dd/MM/yyyy" }}</span>
+                </div>
+              </td>
+
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button
+                    class="action-btn info"
+                    (click)="viewCustomerDetails(customer.id)"
+                    title="Visualizza dettagli"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+
+                  <button
+                    class="action-btn edit"
+                    (click)="showEditForm(customer)"
+                    title="Modifica cliente"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button
+                    class="action-btn delete"
+                    (click)="deleteCustomer(customer.id)"
+                    title="Elimina cliente"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Messaggio nessun risultato -->
+        <div *ngIf="filteredCustomers.length === 0" class="no-results">
+          <div class="no-results-icon">
+            <mat-icon>search_off</mat-icon>
+          </div>
+          <h3>Nessun cliente trovato</h3>
+          <p *ngIf="searchTerm">
+            Prova a modificare i termini di ricerca o rimuovi i filtri
+          </p>
+          <p *ngIf="!searchTerm">Non ci sono clienti registrati nel sistema</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form per aggiunta/modifica cliente -->
+  <div *ngIf="showForm" class="modal-overlay" (click)="hideForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? "Modifica" : "Aggiungi" }} Cliente</h2>
+        <button class="close-button" (click)="hideForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="customerForm" (ngSubmit)="saveCustomer()">
+          <div class="form-grid">
+            <!-- Nome cliente -->
+            <div class="form-field">
+              <label>Nome Azienda *</label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Es. Azienda Agricola Rossi"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  customerForm.get('name')?.hasError('required') &&
+                  customerForm.get('name')?.touched
+                "
+              >
+                Il nome è obbligatorio
+              </div>
+            </div>
+
+            <!-- Partita IVA -->
+            <div class="form-field">
+              <label>Partita IVA *</label>
+              <input
+                type="text"
+                formControlName="vatNumber"
+                placeholder="12345678901"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  customerForm.get('vatNumber')?.hasError('required') &&
+                  customerForm.get('vatNumber')?.touched
+                "
+              >
+                La partita IVA è obbligatoria
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-field">
+              <label>Email *</label>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="info@azienda.com"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  customerForm.get('email')?.hasError('required') &&
+                  customerForm.get('email')?.touched
+                "
+              >
+                L'email è obbligatoria
+              </div>
+            </div>
+
+            <!-- Telefono -->
+            <div class="form-field">
+              <label>Telefono *</label>
+              <input
+                type="tel"
+                formControlName="phone"
+                placeholder="+39 123 456789"
+              />
+              <div
+                class="error-message"
+                *ngIf="
+                  customerForm.get('phone')?.hasError('required') &&
+                  customerForm.get('phone')?.touched
+                "
+              >
+                Il telefono è obbligatorio
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="cancel-button" (click)="hideForm()">
+          Annulla
+        </button>
+        <button
+          type="submit"
+          class="save-button"
+          [disabled]="customerForm.invalid"
+          (click)="saveCustomer()"
+        >
+          {{ isEditMode ? "Aggiorna" : "Aggiungi" }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal dettagli cliente -->
+  <div
+    *ngIf="selectedCustomer || isLoadingDetails"
+    class="modal-overlay"
+    (click)="closeDetails()"
+  >
+    <div
+      class="modal-container details-modal"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2>Dettagli Cliente</h2>
+        <button class="close-button" (click)="closeDetails()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Loading spinner -->
+        <div *ngIf="isLoadingDetails" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Caricamento dettagli...</p>
+        </div>
+
+        <!-- Contenuto dettagli -->
+        <div
+          *ngIf="selectedCustomer && !isLoadingDetails"
+          class="details-content fade-in"
+        >
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Nome:</label>
+              <span>{{ selectedCustomer.name }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Partita IVA:</label>
+              <span>{{ selectedCustomer.vatNumber }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Email:</label>
+              <span>{{ selectedCustomer.email }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Telefono:</label>
+              <span>{{ selectedCustomer.phone }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Data Creazione:</label>
+              <span>{{
+                selectedCustomer.createdAt | date : "dd/MM/yyyy"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1179 @@
+/**
+ * Layout TailAdmin Style - Nero/Bianco
+ * 
+ * Ispirato a https://demo.tailadmin.com/analytics#
+ * - Sidebar nera con testo bianco
+ * - Layout pulito e professionale
+ * - Risoluzione completa sovrapposizioni
+ * - Colori nero/bianco invece di blu
+ */
+
+// === VARIABILI TEMA NERO/BIANCO ===
+:root {
+  // Colori principali - NERO invece di blu
+  --primary-color: #000000;
+  --primary-light: #333333;
+  --primary-dark: #000000;
+  --accent-color: #666666;
+  --warn-color: #dc3545;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+
+  // Sidebar colors - NERO come TailAdmin
+  --sidebar-bg: #1c2434;
+  --sidebar-hover: #313d4f;
+  --sidebar-text: #dee4ee;
+  --sidebar-text-secondary: #8a99af;
+  --sidebar-border: #313d4f;
+
+  // Background e superfici
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #e2e8f0;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+
+  // Testi
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+
+  // Borders e shadows
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+// SCSS Variables - TailAdmin Style
+$sidenav-width: 280px;
+$header-height: 70px;
+$footer-height: 60px;
+
+$breakpoint-mobile: 768px;
+$border-radius: 6px;
+$transition-duration: 250ms;
+
+// === RESET E BASE ===
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+// === LAYOUT PRINCIPALE - RISOLUZIONE SOVRAPPOSIZIONE ===
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+// === HEADER COMPLETAMENTE BIANCO - FORZATO ===
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: $header-height;
+  background: #ffffff !important; // HEADER COMPLETAMENTE BIANCO
+  background-color: #ffffff !important; // FORZATO
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+
+  // FORZARE IL BIANCO SU TUTTI GLI ELEMENTI
+  * {
+    background: transparent !important;
+  }
+
+  .sidenav-toggle {
+    color: #1a1a1a !important; // ICONA NERA SU BIANCO
+    margin-right: 16px;
+    background: transparent !important;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1) !important;
+      border-radius: 6px;
+    }
+  }
+
+  .app-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #1a1a1a;
+    padding: 8px 16px;
+    border-radius: 8px; // RADIUS PER IL LOGO
+
+    .logo-image {
+      height: 32px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white; // TESTO BIANCO SU SFONDO NERO
+    }
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    button {
+      color: #1a1a1a !important; // ICONE NERE
+      border-radius: 6px;
+      background: transparent !important;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1) !important;
+      }
+    }
+  }
+}
+
+// === SOVRASCRIVERE STILI ANGULAR MATERIAL TOOLBAR ===
+mat-toolbar.app-header {
+  background: #ffffff !important; // SOVRASCRIVERE MAT-TOOLBAR
+  background-color: #ffffff !important; // FORZATO
+  color: #1a1a1a !important; // TESTO NERO
+
+  &.mat-toolbar {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+
+  &.mat-primary {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+}
+
+// === SIDENAV CONTAINER - RESPONSIVE LAYOUT ===
+.app-sidenav-container {
+  flex: 1;
+  margin-top: $header-height;
+  height: calc(100vh - #{$header-height});
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+// === SIDENAV DRIBBBLE STYLE - DARK ===
+.app-sidenav {
+  width: $sidenav-width !important;
+  background: #1a1a1a !important; // BACKGROUND DARK
+  border-right: 2px solid #ffffff !important; // BORDER BIANCO 2PX
+  box-shadow: none;
+  position: fixed !important; // FISSO per uscire dal flusso
+  left: 0 !important;
+  top: $header-height !important;
+  height: calc(100vh - #{$header-height}) !important;
+  overflow-y: auto;
+  margin: 0 !important; // NESSUN MARGINE
+  border-radius: 0 !important; // NESSUN BORDER RADIUS
+  z-index: 999 !important;
+
+  // Header della sidebar
+  .sidenav-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid #333333;
+    background: #1a1a1a !important; // DARK
+
+    .sidenav-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ffffff !important; // TESTO BIANCO
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+
+      .sidenav-icon {
+        font-size: 24px;
+        color: #ffffff !important; // ICONA BIANCA
+      }
+    }
+
+    .sidenav-subtitle {
+      color: #cccccc !important; // SOTTOTITOLO GRIGIO CHIARO
+      font-size: 0.875rem;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+  }
+
+  // Navigation list Dribbble style - DARK
+  .sidenav-nav {
+    padding: 16px 12px;
+    flex: 1;
+
+    .nav-item {
+      margin: 4px 0;
+      border-radius: 8px;
+      transition: all $transition-duration ease;
+      min-height: 44px;
+      display: flex !important;
+      align-items: center;
+      padding: 10px 12px !important;
+      color: #ffffff !important; // TESTO BIANCO DI BASE
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      background: transparent;
+
+      &:hover {
+        background: #333333; // HOVER GRIGIO SCURO
+        color: #ffffff !important;
+      }
+
+      &.active-link {
+        background: #ffffff !important; // STATO ATTIVO: SFONDO BIANCO
+        color: #1a1a1a !important; // STATO ATTIVO: TESTO NERO
+        border-radius: 8px;
+
+        mat-icon {
+          color: #1a1a1a !important; // ICONA NERA SU ATTIVO
+        }
+
+        .nav-item-label {
+          color: #1a1a1a !important; // TESTO NERO SU ATTIVO
+        }
+      }
+
+      // Icona e testo INLINE - FORZA BIANCO
+      mat-icon {
+        color: #ffffff !important; // FORZA BIANCO DI BASE
+        margin-right: 12px !important;
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .nav-item-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #ffffff !important; // FORZA BIANCO DI BASE
+        flex: 1;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  // Footer della sidebar - DARK
+  .sidenav-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    border-top: 1px solid #333333;
+    background: #1a1a1a !important; // FOOTER DARK
+
+    .version-info {
+      color: #cccccc !important; // TESTO GRIGIO CHIARO
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+  }
+}
+
+// === CONTENUTO PRINCIPALE - DARK CON BORDER RADIUS ===
+.app-content {
+  flex: 1;
+  margin-left: $sidenav-width !important; // Margine per la sidebar fissa SENZA MARGINE EXTRA
+  padding: 24px !important; // Padding per il contenuto
+  background: #1a1a1a !important; // CONTENT DARK
+  color: #ffffff !important; // TESTO BIANCO
+  overflow-y: auto;
+  border-radius: 16px !important; // BORDER RADIUS ELEGANTE
+  margin-top: 12px !important; // Margine superiore
+  margin-right: 12px !important; // Margine destro
+  margin-bottom: 12px !important; // Margine inferiore
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important; // SHADOW SOTTILE
+  border: 2px solid #ffffff !important; // BORDER BIANCO 2PX
+
+  // Responsive behavior
+  @media (max-width: $breakpoint-mobile) {
+    margin-left: 12px !important;
+    margin-right: 12px !important;
+    border-radius: 12px !important;
+  }
+}
+
+// === NAVBAR FIXED - CONTENUTO SI SPOSTA QUANDO APERTA ===
+.mat-sidenav-container {
+  .mat-sidenav-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    transition: margin-left $transition-duration ease,
+      width $transition-duration ease !important;
+  }
+}
+
+// FORZA IL COMPORTAMENTO CORRETTO - USANDO CLASSE DINAMICA
+.app-sidenav-container {
+  // Quando navbar è APERTA - contenuto si sposta a destra
+  &.navbar-open {
+    .mat-sidenav-content {
+      margin-left: calc(#{$sidenav-width} + 24px) !important;
+      width: calc(100% - #{$sidenav-width} - 24px) !important;
+    }
+  }
+
+  // Quando navbar è CHIUSA - contenuto occupa tutto
+  &:not(.navbar-open) {
+    .mat-sidenav-content {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
+  }
+}
+
+// === RESPONSIVE ===
+@media (max-width: $breakpoint-mobile) {
+  .app-sidenav {
+    width: 100% !important;
+    margin: 0;
+    border-radius: 0 !important;
+    background: #1a1a1a !important; // MANTIENI DARK SU MOBILE
+
+    .sidenav-nav .nav-item {
+      padding: 16px 20px !important;
+      min-height: 56px;
+    }
+
+    .sidenav-header {
+      border-radius: 0 !important;
+      background: #1a1a1a !important; // DARK SU MOBILE
+    }
+
+    .sidenav-footer {
+      border-radius: 0 !important;
+      background: #1a1a1a !important; // DARK SU MOBILE
+    }
+  }
+
+  .app-content {
+    .main-content {
+      padding: 16px;
+    }
+  }
+}
+
+// === SIDENAV TOGGLE BEHAVIOR ===
+.mat-sidenav-container {
+  // Transizione fluida per tutte le modifiche
+  transition: all $transition-duration ease;
+}
+
+// === ANGULAR MATERIAL OVERRIDES ===
+.mat-mdc-list-item {
+  --mdc-list-list-item-container-height: 44px !important;
+
+  .mdc-list-item__content {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 !important;
+  }
+
+  .mdc-list-item__primary-text {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+}
+
+// Correzioni specifiche per Material Design - FORZA COLORI SIDEBAR
+.mat-mdc-nav-list .mat-mdc-list-item {
+  .mdc-list-item__content {
+    align-items: center !important;
+  }
+
+  &:hover {
+    background: transparent !important;
+  }
+
+  // Rimuove ripple effect di Material Design
+  .mat-ripple {
+    display: none !important;
+  }
+}
+
+// FORZA COLORI BIANCHI SULLA SIDEBAR DARK
+.app-sidenav {
+  .mat-mdc-list-item {
+    color: #ffffff !important;
+
+    .mat-mdc-list-item-title {
+      color: #ffffff !important;
+    }
+
+    .mat-mdc-list-item-subtitle {
+      color: #cccccc !important;
+    }
+
+    .mat-icon {
+      color: #ffffff !important;
+    }
+
+    // Stato attivo - INVERTI COLORI
+    &.active-link {
+      color: #1a1a1a !important;
+
+      .mat-mdc-list-item-title {
+        color: #1a1a1a !important;
+      }
+
+      .mat-icon {
+        color: #1a1a1a !important;
+      }
+    }
+  }
+}
+
+// CONTENUTO SEMPRE AL 100% - NAVBAR È FIXED
+.mat-sidenav-content {
+  margin-left: 0 !important;
+  width: 100% !important;
+  flex: 1 !important;
+}
+
+// Assicura che il contenuto sia sempre centrato
+.app-sidenav-container {
+  .mat-sidenav-content {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+
+// === ANIMAZIONI ===
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-sidenav {
+  animation: slideInFromLeft 0.4s ease-out;
+}
+
+.main-content {
+  animation: fadeIn 0.6s ease-out;
+}
+
+// === THEME CONSISTENCY BLACK & WHITE ===
+.mat-mdc-card {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mat-mdc-button {
+  color: #1a1a1a !important;
+  border-radius: 8px !important;
+}
+
+.mat-mdc-raised-button {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.mat-mdc-icon-button {
+  color: #1a1a1a !important;
+  border-radius: 6px !important;
+}
+
+.mat-mdc-list-item {
+  color: inherit !important;
+}
+
+// === CARD DASHBOARD STYLE ===
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+
+  .dashboard-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      background: #1a1a1a;
+      color: #ffffff;
+      font-size: 24px;
+    }
+
+    .card-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .card-label {
+      color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// === MODERN TABLE STYLES ===
+.modern-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 24px 0;
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+
+    .table-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .title-icon {
+        width: 32px;
+        height: 32px;
+        background: #1a1a1a;
+        color: #ffffff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .title-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .title-count {
+        background: #e2e8f0;
+        color: #64748b;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .search-input {
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1a1a1a;
+        min-width: 300px;
+
+        &:focus {
+          outline: none;
+          border-color: #1a1a1a;
+          box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+        }
+      }
+
+      .add-button {
+        background: #1a1a1a;
+        color: #ffffff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+          background: #333333;
+        }
+      }
+    }
+  }
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #f8f9fa;
+
+    th {
+      padding: 16px 24px;
+      text-align: left;
+      font-weight: 600;
+      color: #64748b;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      td {
+        padding: 20px 24px;
+        color: #1a1a1a;
+        font-size: 0.95rem;
+        vertical-align: middle;
+
+        &.machine-name {
+          font-weight: 600;
+          color: #1a1a1a;
+        }
+
+        &.client-name {
+          color: #64748b;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}
+
+// === STATUS LABELS (CLICCABILI) ===
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+
+  &.status-running {
+    background: #1a1a1a;
+    color: #ffffff;
+
+    &:hover {
+      background: #333333;
+    }
+  }
+
+  &.status-stopped {
+    background: #ffffff;
+    color: #1a1a1a;
+    border: 1px solid #e2e8f0;
+
+    &:hover {
+      background: #f8f9fa;
+      border-color: #1a1a1a;
+    }
+  }
+
+  &.status-error {
+    background: #ffffff;
+    color: #dc2626;
+    border: 1px solid #fee2e2;
+
+    &:hover {
+      background: #fef2f2;
+      border-color: #dc2626;
+    }
+  }
+
+  &.status-maintenance {
+    background: #1a1a1a;
+    color: #ffffff;
+
+    &:hover {
+      background: #333333;
+    }
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.dot-running {
+      background: #10b981;
+    }
+    &.dot-stopped {
+      background: #64748b;
+    }
+    &.dot-error {
+      background: #dc2626;
+    }
+    &.dot-maintenance {
+      background: #3b82f6;
+    }
+  }
+}
+
+// === ACTION BUTTONS ===
+.action-buttons {
+  display: flex;
+  gap: 8px;
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #64748b;
+
+    &:hover {
+      background: #1a1a1a;
+      color: #ffffff;
+      border-color: #1a1a1a;
+    }
+
+    &.delete-btn:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+    }
+  }
+}
+
+// === SCROLLBAR STYLING ===
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+// === PAGE LAYOUT ===
+.page-container {
+  padding: 32px;
+  background: #f8f9fa;
+  min-height: calc(100vh - #{$header-height});
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .page-icon {
+        width: 48px;
+        height: 48px;
+        background: #1a1a1a;
+        color: #ffffff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+      }
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+  }
+}
+
+// === STATS GRID ===
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .stat-header {
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+
+        font-size: 18px;
+
+        &.machines {
+          background: #1a1a1a;
+          color: #ffffff;
+        }
+        &.active {
+          background: #22c55e;
+          color: #ffffff;
+        }
+        &.clients {
+          background: #3b82f6;
+          color: #ffffff;
+        }
+        &.alerts {
+          background: #ef4444;
+          color: #ffffff;
+        }
+      }
+
+      .stat-label {
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+  }
+}
+
+// === UTILITY CLASSES BLACK & WHITE ===
+.text-center {
+  text-align: center;
+}
+.text-primary {
+  color: #1a1a1a;
+}
+.text-secondary {
+  color: #64748b;
+}
+.text-muted {
+  color: #94a3b8;
+}
+.text-white {
+  color: #ffffff;
+}
+
+.bg-primary {
+  background: #1a1a1a;
+}
+.bg-white {
+  background: #ffffff;
+}
+.bg-light {
+  background: #f8f9fa;
+}
+.bg-gray {
+  background: #e2e8f0;
+}
+
+.border-radius-sm {
+  border-radius: 6px;
+}
+.border-radius-md {
+  border-radius: 8px;
+}
+.border-radius-lg {
+  border-radius: 12px;
+}
+.border-radius-xl {
+  border-radius: 16px;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.shadow-lg {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+.hover-lift {
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// === ANGULAR MATERIAL SIDEBAR OVERRIDES SUPER AGGRESSIVI ===
+.app-sidenav {
+  // FORZA TUTTI I MAT-LIST-ITEM A ESSERE BIANCHI
+  .mat-nav-list .mat-mdc-list-item,
+  .mat-nav-list .mat-list-item,
+  .mat-nav-list a[mat-list-item],
+  .sidenav-nav .mat-mdc-list-item,
+  .sidenav-nav .mat-list-item,
+  .sidenav-nav a[mat-list-item],
+  a.nav-item,
+  .nav-item {
+    color: #ffffff !important;
+    background: transparent !important;
+    border-radius: 8px !important;
+    margin: 4px 0 !important;
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    transition: all 0.25s ease !important;
+
+    // FORZA TUTTI I TESTI A ESSERE BIANCHI
+    .mat-mdc-list-item-title,
+    .mat-list-item-content,
+    .mat-line,
+    .nav-item-label,
+    div[matLine],
+    span,
+    div {
+      color: #ffffff !important;
+    }
+
+    // FORZA TUTTE LE ICONE A ESSERE BIANCHE
+    .mat-icon,
+    .mat-list-icon,
+    mat-icon[matListIcon],
+    mat-icon {
+      color: #ffffff !important;
+    }
+
+    // HOVER - SFONDO GRIGIO SCURO, TUTTO RIMANE BIANCO
+    &:hover {
+      background: #333333 !important;
+      color: #ffffff !important;
+
+      .mat-mdc-list-item-title,
+      .mat-list-item-content,
+      .mat-line,
+      .nav-item-label,
+      div[matLine],
+      span,
+      div {
+        color: #ffffff !important;
+      }
+
+      .mat-icon,
+      .mat-list-icon,
+      mat-icon[matListIcon],
+      mat-icon {
+        color: #ffffff !important;
+      }
+    }
+
+    // STATO ATTIVO - SFONDO BIANCO, TUTTO NERO
+    &.active-link,
+    &.mat-mdc-list-item-selected,
+    &.mat-list-item-selected {
+      background: #ffffff !important;
+      color: #1a1a1a !important;
+
+      .mat-mdc-list-item-title,
+      .mat-list-item-content,
+      .mat-line,
+      .nav-item-label,
+      div[matLine],
+      span,
+      div {
+        color: #1a1a1a !important;
+      }
+
+      .mat-icon,
+      .mat-list-icon,
+      mat-icon[matListIcon],
+      mat-icon {
+        color: #1a1a1a !important;
+      }
+
+      // HOVER SULLO STATO ATTIVO - RIMANE BIANCO E NERO
+      &:hover {
+        background: #ffffff !important;
+        color: #1a1a1a !important;
+
+        .mat-mdc-list-item-title,
+        .mat-list-item-content,
+        .mat-line,
+        .nav-item-label,
+        div[matLine],
+        span,
+        div {
+          color: #1a1a1a !important;
+        }
+
+        .mat-icon,
+        .mat-list-icon,
+        mat-icon[matListIcon],
+        mat-icon {
+          color: #1a1a1a !important;
+        }
+      }
+    }
+
+    // FOCUS - NO BACKGROUND CHANGE SE NON ATTIVO
+    &:focus:not(.active-link) {
+      background: #333333 !important;
+      color: #ffffff !important;
+      outline: none !important;
+
+      .mat-mdc-list-item-title,
+      .mat-list-item-content,
+      .mat-line,
+      .nav-item-label,
+      div[matLine],
+      span,
+      div {
+        color: #ffffff !important;
+      }
+
+      .mat-icon,
+      .mat-list-icon,
+      mat-icon[matListIcon],
+      mat-icon {
+        color: #ffffff !important;
+      }
+    }
+
+    // FOCUS SULLO STATO ATTIVO
+    &:focus.active-link {
+      background: #ffffff !important;
+      color: #1a1a1a !important;
+      outline: none !important;
+    }
+  }
+
+  // RIMUOVI TUTTI GLI EFFETTI MATERIAL
+  .mat-ripple,
+  .mat-mdc-list-item-ripple,
+  .mdc-list-item__ripple {
+    display: none !important;
+  }
+
+  // FORZA STILI NAVIGATION LIST
+  .mat-nav-list {
+    padding: 16px 12px !important;
+    background: transparent !important;
+  }
+}

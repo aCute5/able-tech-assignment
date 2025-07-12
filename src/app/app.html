@@ -1,0 +1,74 @@
+<!--
+  Template principale dell'applicazione
+  
+  Struttura del layout:
+  - Header con toolbar Material Design
+  - Container principale con sidenav e content
+  - Sidenav responsive con menu di navigazione
+  - Area principale per il contenuto dinamico
+  
+  Funzionalità:
+  - Layout responsive che si adatta a desktop e mobile
+  - Navigazione tramite Angular Router
+  - Side menu collassabile
+  - Design Material Design consistente
+-->
+
+<div class="app-container">
+  <!-- Header principale -->
+  <mat-toolbar class="app-header">
+    <button
+      mat-icon-button
+      class="sidenav-toggle"
+      (click)="toggleSidenav()"
+      aria-label="Menu di navigazione"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="app-logo">
+      <img src="/images/logo.png" alt="AgraMachines Logo" class="logo-image" />
+    </div>
+
+    <span class="spacer"></span>
+  </mat-toolbar>
+
+  <mat-sidenav-container
+    class="app-sidenav-container"
+    [class.navbar-open]="sidenavOpened"
+  >
+    <!-- Side navigation menu -->
+    <mat-sidenav
+      #sidenav
+      class="app-sidenav"
+      fixedInViewport
+      [attr.role]="'navigation'"
+      [mode]="'side'"
+      [opened]="sidenavOpened"
+    >
+      <!-- Lista di navigazione -->
+      <mat-nav-list class="sidenav-nav">
+        <a
+          mat-list-item
+          *ngFor="let item of menuItems"
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          class="nav-item"
+        >
+          <div style="display: flex; align-items: center; gap: 10px">
+            <mat-icon matListIcon>{{ item.icon }}</mat-icon>
+            <div matLine class="nav-item-label">{{ item.label }}</div>
+          </div>
+        </a>
+      </mat-nav-list>
+
+      <!-- Footer del sidenav -->
+    </mat-sidenav>
+
+    <mat-sidenav-content class="app-content">
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
