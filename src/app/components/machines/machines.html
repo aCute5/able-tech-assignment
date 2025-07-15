@@ -572,14 +572,14 @@
               <span
                 class="efficiency-value"
                 [style.color]="
-                  selectedMachine.efficiency >= 85
+                  (selectedMachine?.efficiency ?? 0) >= 85
                     ? '#4CAF50'
-                    : selectedMachine.efficiency >= 70
+                    : (selectedMachine?.efficiency ?? 0) >= 70
                     ? '#FF9800'
                     : '#F44336'
                 "
               >
-                {{ selectedMachine.efficiency }}%
+                {{ selectedMachine?.efficiency ?? 0 }}%
               </span>
             </div>
 
